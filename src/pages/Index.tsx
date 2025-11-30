@@ -113,7 +113,7 @@ const Index = () => {
               </Button>
               <Button size="lg" variant="outline" className="text-lg">
                 <Icon name="Play" className="mr-2" />
-                IP: 127.0.0.1:27015
+                IP: 194.93.2.148:27015
               </Button>
             </div>
           </div>
