@@ -19,6 +19,8 @@ const Index = () => {
     map: 'Загрузка...',
     game: 'Garry\'s Mod'
   });
+  const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
+  const [timeSinceUpdate, setTimeSinceUpdate] = useState('');
 
   useEffect(() => {
     const fetchServerStats = async () => {
@@ -26,6 +28,7 @@ const Index = () => {
         const response = await fetch('https://functions.poehali.dev/8225ab76-f49a-405e-a5e7-0a669dd4e5f0?ip=194.93.2.148&port=27015');
         const data = await response.json();
         setServerStats(data);
+        setLastUpdate(new Date());
       } catch (error) {
         console.error('Failed to fetch server stats:', error);
       }
@@ -35,6 +38,27 @@ const Index = () => {
     const interval = setInterval(fetchServerStats, 30000);
     return () => clearInterval(interval);
   }, []);
+
+  useEffect(() => {
+    const updateTimer = () => {
+      if (!lastUpdate) return;
+      
+      const seconds = Math.floor((Date.now() - lastUpdate.getTime()) / 1000);
+      
+      if (seconds < 60) {
+        setTimeSinceUpdate(`Обновлено ${seconds} сек назад`);
+      } else if (seconds < 3600) {
+        const minutes = Math.floor(seconds / 60);
+        setTimeSinceUpdate(`Обновлено ${minutes} мин назад`);
+      } else {
+        setTimeSinceUpdate('Обновлено давно');
+      }
+    };
+
+    updateTimer();
+    const timer = setInterval(updateTimer, 1000);
+    return () => clearInterval(timer);
+  }, [lastUpdate]);
 
   const leaderboardData = [
     { rank: 1, name: 'Dr. Bright', score: 15420, status: 'online' },
@@ -146,7 +170,15 @@ const Index = () => {
 
       <section id="stats" className="py-20 px-4 bg-card/50">
         <div className="container mx-auto">
-          <h2 className="text-4xl font-bold text-center mb-12 glow-text">Статистика сервера</h2>
+          <div className="text-center mb-12">
+            <h2 className="text-4xl font-bold glow-text">Статистика сервера</h2>
+            {timeSinceUpdate && (
+              <p className="text-sm text-muted-foreground mt-2 flex items-center justify-center gap-2">
+                <Icon name="RefreshCw" className="w-3 h-3" />
+                {timeSinceUpdate}
+              </p>
+            )}
+          </div>
           <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
             <Card className="border-primary/20 hover:border-primary/50 transition-all hover:glow">
               <CardHeader>
