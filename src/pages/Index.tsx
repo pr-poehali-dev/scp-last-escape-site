@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,6 +11,30 @@ import { Separator } from '@/components/ui/separator';
 
 const Index = () => {
   const [activeSection, setActiveSection] = useState('main');
+  const [serverStats, setServerStats] = useState({
+    online: false,
+    players: 0,
+    max_players: 64,
+    name: 'SCP Foundation: Last Escape',
+    map: 'Загрузка...',
+    game: 'Garry\'s Mod'
+  });
+
+  useEffect(() => {
+    const fetchServerStats = async () => {
+      try {
+        const response = await fetch('https://functions.poehali.dev/8225ab76-f49a-405e-a5e7-0a669dd4e5f0?ip=194.93.2.148&port=27015');
+        const data = await response.json();
+        setServerStats(data);
+      } catch (error) {
+        console.error('Failed to fetch server stats:', error);
+      }
+    };
+
+    fetchServerStats();
+    const interval = setInterval(fetchServerStats, 30000);
+    return () => clearInterval(interval);
+  }, []);
 
   const leaderboardData = [
     { rank: 1, name: 'Dr. Bright', score: 15420, status: 'online' },
@@ -132,7 +156,7 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-4xl font-bold text-primary">42/64</p>
+                <p className="text-4xl font-bold text-primary">{serverStats.players}/{serverStats.max_players}</p>
                 <p className="text-sm text-muted-foreground mt-2">игроков на сервере</p>
               </CardContent>
             </Card>
@@ -145,34 +169,36 @@ const Index = () => {
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-4xl font-bold text-green-500">ONLINE</p>
-                <p className="text-sm text-muted-foreground mt-2">сервер работает</p>
+                <p className={`text-4xl font-bold ${serverStats.online ? 'text-green-500' : 'text-red-500'}`}>
+                  {serverStats.online ? 'ONLINE' : 'OFFLINE'}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">{serverStats.online ? 'сервер работает' : 'сервер недоступен'}</p>
               </CardContent>
             </Card>
 
             <Card className="border-primary/20 hover:border-primary/50 transition-all hover:glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Icon name="Clock" className="text-primary" />
-                  Аптайм
+                  <Icon name="Map" className="text-primary" />
+                  Карта
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-4xl font-bold text-primary">99.8%</p>
-                <p className="text-sm text-muted-foreground mt-2">стабильность</p>
+                <p className="text-2xl font-bold text-primary truncate">{serverStats.map}</p>
+                <p className="text-sm text-muted-foreground mt-2">текущая карта</p>
               </CardContent>
             </Card>
 
             <Card className="border-primary/20 hover:border-primary/50 transition-all hover:glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Icon name="Award" className="text-primary" />
-                  Игроков
+                  <Icon name="Server" className="text-primary" />
+                  Сервер
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-4xl font-bold text-primary">2,547</p>
-                <p className="text-sm text-muted-foreground mt-2">всего зарегистрировано</p>
+                <p className="text-xl font-bold text-primary">{serverStats.name}</p>
+                <p className="text-sm text-muted-foreground mt-2">{serverStats.game}</p>
               </CardContent>
             </Card>
           </div>
