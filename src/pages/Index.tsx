@@ -14,10 +14,14 @@ const Index = () => {
   const [serverStats, setServerStats] = useState({
     online: false,
     players: 0,
-    max_players: 64,
-    name: 'SCP Foundation: Last Escape',
+    max_players: 60,
+    name: 'SCP FOUNDATION: LAST ESCAPE',
     map: 'Загрузка...',
-    game: 'Garry\'s Mod'
+    game: 'Garry\'s Mod',
+    rank: 0,
+    total_servers: 0,
+    country_rank: 0,
+    description: ''
   });
   const [lastUpdate, setLastUpdate] = useState<Date | null>(null);
   const [timeSinceUpdate, setTimeSinceUpdate] = useState('');
@@ -25,7 +29,7 @@ const Index = () => {
   useEffect(() => {
     const fetchServerStats = async () => {
       try {
-        const response = await fetch('https://functions.poehali.dev/8225ab76-f49a-405e-a5e7-0a669dd4e5f0?ip=194.93.2.148&port=27015');
+        const response = await fetch('https://functions.poehali.dev/48af38e3-4215-4cd0-8a1b-07e48e65fee3');
         const data = await response.json();
         setServerStats(data);
         setLastUpdate(new Date());
@@ -224,13 +228,17 @@ const Index = () => {
             <Card className="border-primary/20 hover:border-primary/50 transition-all hover:glow">
               <CardHeader>
                 <CardTitle className="flex items-center gap-2">
-                  <Icon name="Server" className="text-primary" />
-                  Сервер
+                  <Icon name="Trophy" className="text-primary" />
+                  Рейтинг
                 </CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xl font-bold text-primary">{serverStats.name}</p>
-                <p className="text-sm text-muted-foreground mt-2">{serverStats.game}</p>
+                <p className="text-3xl font-bold text-primary">
+                  {serverStats.rank > 0 ? `#${serverStats.rank}` : '—'}
+                </p>
+                <p className="text-sm text-muted-foreground mt-2">
+                  {serverStats.total_servers > 0 ? `из ${serverStats.total_servers} серверов` : 'загрузка...'}
+                </p>
               </CardContent>
             </Card>
           </div>
@@ -311,10 +319,10 @@ const Index = () => {
             <CardHeader>
               <CardTitle className="text-2xl flex items-center gap-2">
                 <Icon name="Info" className="text-primary" />
-                SCP Foundation: Last Escape
+                {serverStats.name}
               </CardTitle>
               <CardDescription className="text-base">
-                Проект создан в 2024 году энтузиастами вселенной SCP
+                {serverStats.description || 'Проект создан в 2024 году энтузиастами вселенной SCP'}
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 text-muted-foreground">

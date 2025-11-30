@@ -1,0 +1,10 @@
+{
+  "tests": [
+    {
+      "name": "Fetch server stats from tsarvar",
+      "method": "GET",
+      "path": "/",
+      "expectedStatus": 200
+    }
+  ]
+}
