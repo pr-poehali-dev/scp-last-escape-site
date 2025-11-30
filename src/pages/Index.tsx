@@ -535,7 +535,7 @@ const Index = () => {
               <CardContent className="pt-6 space-y-4">
                 <Icon name="MessageCircle" className="w-12 h-12 mx-auto text-primary" />
                 <h3 className="text-xl font-semibold">Discord</h3>
-                <p className="text-muted-foreground">discord.gg/scplast</p>
+                <p className="text-muted-foreground">discord.gg/secure-contain-protect</p>
               </CardContent>
             </Card>
 
